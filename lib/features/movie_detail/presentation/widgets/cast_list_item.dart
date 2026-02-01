@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_browse/core/config/app_config.dart';
 
-import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/cast_member.dart';
 
 class CastListItem extends StatelessWidget {
@@ -16,7 +16,7 @@ class CastListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final photoUrl = castMember.profilePath != null
-        ? '${ApiConstants.imageBaseUrl}${castMember.profilePath}'
+        ? '${AppConfig.imageBaseUrl}${castMember.profilePath}'
         : null;
 
     return InkWell(

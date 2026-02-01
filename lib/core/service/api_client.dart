@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../config/app_config.dart';
-import '../constants/api_constants.dart';
 
 /// Dio-based API client with Bearer auth and logging interceptors.
 /// Token and userId come from [AppConfig] when not passed (set from main.dart).
@@ -10,9 +9,9 @@ class ApiClient {
     String? baseUrl,
     String? token,
     String? userId,
-  })  : _baseUrl = baseUrl ?? ApiConstants.baseUrl,
-        _token = token ?? AppConfig.apiToken ?? ApiConstants.mockToken,
-        _userId = userId ?? AppConfig.userId {
+  })  : _baseUrl = baseUrl ?? AppConfig.baseUrl ?? '',
+        _token = token ?? AppConfig.apiToken ?? '',
+        _userId = userId ?? AppConfig.userId ?? '' {
     _dio = Dio(
       BaseOptions(
         baseUrl: _baseUrl,

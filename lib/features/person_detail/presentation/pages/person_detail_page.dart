@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_browse/core/config/app_config.dart';
 
-import '../../../../core/constants/api_constants.dart';
 import '../../injection.dart';
 import '../bloc/person_detail_bloc.dart';
 
@@ -13,8 +13,9 @@ class PersonDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PersonDetailBloc>(
-      create: (_) => context.read<PersonDetailBlocFactory>()(personId)
-        ..add(const PersonDetailLoadRequested()),
+      create: (_) =>
+          context.read<PersonDetailBlocFactory>()(personId)
+            ..add(const PersonDetailLoadRequested()),
       child: _PersonDetailView(personId: personId),
     );
   }
@@ -28,9 +29,7 @@ class _PersonDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Person'),
-      ),
+      appBar: AppBar(title: const Text('Person')),
       body: BlocBuilder<PersonDetailBloc, PersonDetailState>(
         builder: (context, state) {
           if (state is PersonDetailLoading) {
@@ -47,9 +46,9 @@ class _PersonDetailView extends StatelessWidget {
                     Text(state.message, textAlign: TextAlign.center),
                     const SizedBox(height: 16),
                     FilledButton.icon(
-                      onPressed: () => context
-                          .read<PersonDetailBloc>()
-                          .add(const PersonDetailLoadRequested()),
+                      onPressed: () => context.read<PersonDetailBloc>().add(
+                        const PersonDetailLoadRequested(),
+                      ),
                       icon: const Icon(Icons.refresh),
                       label: const Text('Retry'),
                     ),
@@ -62,7 +61,7 @@ class _PersonDetailView extends StatelessWidget {
           if (state is PersonDetailLoaded) {
             final person = state.person;
             final photoUrl = person.profilePath != null
-                ? '${ApiConstants.imageBaseUrl}${person.profilePath}'
+                ? '${AppConfig.imageBaseUrl}${person.profilePath}'
                 : null;
 
             return SingleChildScrollView(
@@ -79,7 +78,8 @@ class _PersonDetailView extends StatelessWidget {
                               width: 200,
                               height: 280,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => _buildPlaceholder(context),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  _buildPlaceholder(context),
                             )
                           : _buildPlaceholder(context),
                     ),
@@ -90,7 +90,8 @@ class _PersonDetailView extends StatelessWidget {
                     style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
-                  if (person.birthday != null && person.birthday!.isNotEmpty) ...[
+                  if (person.birthday != null &&
+                      person.birthday!.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Text(
                       'Born: ${person.birthday}${person.placeOfBirth != null && person.placeOfBirth!.isNotEmpty ? ' in ${person.placeOfBirth}' : ''}',

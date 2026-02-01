@@ -5,8 +5,6 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'https://api.themoviedb.org/3';
-  static const String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
   /// Fallback when no token is provided (e.g. main() without args).
   /// Replace with your TMDB API Read Access Token (v4) from https://www.themoviedb.org/settings/api

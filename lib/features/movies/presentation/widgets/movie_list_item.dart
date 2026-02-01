@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_browse/core/config/app_config.dart';
 
-import '../../../../core/constants/api_constants.dart';
 import '../../domain/entities/movie.dart';
 
 class MovieListItem extends StatelessWidget {
@@ -18,7 +18,7 @@ class MovieListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final posterUrl = movie.posterPath != null
-        ? '${ApiConstants.imageBaseUrl}${movie.posterPath}'
+        ? '${AppConfig.imageBaseUrl}${movie.posterPath}'
         : null;
 
     return InkWell(
@@ -36,7 +36,8 @@ class MovieListItem extends StatelessWidget {
                       width: 80,
                       height: 120,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildPlaceholder(),
                     )
                   : _buildPlaceholder(),
             ),
@@ -56,11 +57,10 @@ class MovieListItem extends StatelessWidget {
                     Text(
                       movie.year,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
                     ),
                   ],
                   if (movie.voteAverage != null && movie.voteAverage! > 0) ...[

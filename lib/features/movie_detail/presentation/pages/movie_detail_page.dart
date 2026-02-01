@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_browse/core/config/app_config.dart';
 
-import '../../../../core/constants/api_constants.dart';
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/service/navigation_service.dart';
 import '../../injection.dart';
@@ -70,7 +70,7 @@ class _MovieDetailView extends StatelessWidget {
             final detail = state.detail;
             final movie = detail.movie;
             final posterUrl = movie.posterPath != null
-                ? '${ApiConstants.imageBaseUrl}${movie.posterPath}'
+                ? '${AppConfig.imageBaseUrl}${movie.posterPath}'
                 : null;
 
             return CustomScrollView(

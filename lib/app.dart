@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_browse/core/config/app_config.dart';
 
 import 'core/constants/app_routes.dart';
 import 'core/service/event_channel_service.dart';
@@ -98,7 +99,7 @@ class MovieBrowseApp extends StatelessWidget {
       ],
       child: MaterialApp(
         navigatorKey: _navigationService.navigatorKey,
-        title: 'Movie Browse',
+        title: AppConfig.appName,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
