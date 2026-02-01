@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_browse/core/config/app_config.dart';
 
 import '../../../../core/constants/app_routes.dart';
 import '../../../../core/service/navigation_service.dart';
@@ -31,7 +32,7 @@ class _DiscoverMoviesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discover'),
+        title: Text(AppConfig.appName ?? 'Movie Browse'),
       ),
       body: BlocConsumer<MoviesBloc, MoviesState>(
         listener: (context, state) {},
