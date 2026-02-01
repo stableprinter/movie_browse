@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/errors/failures.dart';
@@ -20,7 +19,7 @@ class MoviesRemoteDatasourceImpl implements MoviesRemoteDatasource {
     String language = 'en-US',
   }) async {
     try {
-      final response = await _api.dio.get(
+      final response = await _api.get<dynamic>(
         ApiConstants.discoverMovieEndpoint(),
         queryParameters: {
           'sort_by': 'popularity.desc',
@@ -29,7 +28,7 @@ class MoviesRemoteDatasourceImpl implements MoviesRemoteDatasource {
         },
       );
 
-      if (response.statusCode != 200) {
+      if (!response.isSuccess) {
         return Left(ServerFailure('Failed to load movies'));
       }
 
@@ -41,15 +40,11 @@ class MoviesRemoteDatasourceImpl implements MoviesRemoteDatasource {
           .toList();
 
       return Right(movies);
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
+    } on NetworkException catch (e) {
+      if (e.statusCode == null) {
         return Left(NetworkFailure(e.message));
       }
-      final data = e.response?.data;
-      final message = data is Map ? data['status_message'] as String? : null;
-      return Left(ServerFailure(message ?? e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

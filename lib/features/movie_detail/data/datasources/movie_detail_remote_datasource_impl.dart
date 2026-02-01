@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 
 import '../../../../core/config/app_config.dart';
 import '../../../../core/constants/api_constants.dart';
@@ -20,14 +19,14 @@ class MovieDetailRemoteDatasourceImpl implements MovieDetailRemoteDatasource {
   @override
   Future<Either<Failure, MovieDetail>> getMovieDetail(int movieId) async {
     try {
-      final detailResponse = await _api.dio.get(
+      final detailResponse = await _api.get<dynamic>(
         ApiConstants.movieDetailEndpoint(movieId),
       );
-      final creditsResponse = await _api.dio.get(
+      final creditsResponse = await _api.get<dynamic>(
         ApiConstants.movieCreditsEndpoint(movieId),
       );
 
-      if (detailResponse.statusCode != 200) {
+      if (!detailResponse.isSuccess) {
         return Left(ServerFailure('Failed to load movie details'));
       }
 
@@ -39,7 +38,7 @@ class MovieDetailRemoteDatasourceImpl implements MovieDetailRemoteDatasource {
       final movie = MovieModel.fromJson(detailData);
 
       List<CastMember> cast = [];
-      if (creditsResponse.statusCode == 200) {
+      if (creditsResponse.isSuccess) {
         final creditsData = creditsResponse.data as Map<String, dynamic>?;
         final castList = creditsData?['cast'] as List<dynamic>? ?? [];
         cast = castList
@@ -49,15 +48,11 @@ class MovieDetailRemoteDatasourceImpl implements MovieDetailRemoteDatasource {
       }
 
       return Right(MovieDetail(movie: movie, cast: cast));
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
+    } on NetworkException catch (e) {
+      if (e.statusCode == null) {
         return Left(NetworkFailure(e.message));
       }
-      final data = e.response?.data;
-      final message = data is Map ? data['status_message'] as String? : null;
-      return Left(ServerFailure(message ?? e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -67,7 +62,7 @@ class MovieDetailRemoteDatasourceImpl implements MovieDetailRemoteDatasource {
   Future<Either<Failure, void>> toggleFavorite(int mediaId, bool favorite) async {
     try {
       final accountId = int.tryParse(AppConfig.userId ?? '0') ?? 0;
-      final response = await _api.dio.post(
+      final response = await _api.post<dynamic>(
         ApiConstants.accountFavoriteEndpoint(accountId),
         data: {
           'media_type': 'movie',
@@ -76,19 +71,15 @@ class MovieDetailRemoteDatasourceImpl implements MovieDetailRemoteDatasource {
         },
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.isSuccess) {
         return const Right(null);
       }
       return Left(ServerFailure('Failed to update favorite'));
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
+    } on NetworkException catch (e) {
+      if (e.statusCode == null) {
         return Left(NetworkFailure(e.message));
       }
-      final data = e.response?.data;
-      final message = data is Map ? data['status_message'] as String? : null;
-      return Left(ServerFailure(message ?? e.message));
+      return Left(ServerFailure(e.message));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

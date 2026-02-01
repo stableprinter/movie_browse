@@ -1,5 +1,6 @@
 name: movie_browse
 description: "A new Flutter module project."
+publish_to: none
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -34,9 +35,10 @@ dependencies:
   # Value equality
   equatable: ^2.0.5
 
-  # HTTP client
-  dio: ^5.7.0
-
+  network_package:
+    git:
+      url: https://github.com/stableprinter/network_package.git
+      ref: main
   # Functional error handling
   dartz: ^0.10.1
 
