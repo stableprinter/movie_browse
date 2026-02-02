@@ -27,12 +27,7 @@ class AppConfig {
 
   /// Applies config from Super-App browse entry-point arguments.
   /// [args]: [apiToken, userId, baseUrl, appName, imageBaseUrl]
-  /// /// Super-App Documentation:
-  /// First array of arguments is the API token
-  /// Second array of arguments is the user ID
-  /// Third array of arguments is the base URL
-  /// Fourth array of arguments is the AppName
-  /// Fifth array of arguments is the image base URL
+  /// brandFont is always 'BrandFont' as a rule
   static void fromBrowseArgs(List<String> args) {
     set(
       apiToken: args.isNotEmpty ? args[0] : null,
