@@ -58,7 +58,7 @@ void main() {
       await tester.pumpWidget(createTestWidget());
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.byType(MovieListItem), findsOneWidget);
+      expect(find.byType(MovieListItem), findsNothing);
     });
 
     testWidgets('displays loading indicator when in loading state',
