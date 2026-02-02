@@ -6,7 +6,7 @@ import '../constants/channel_constants.dart';
 /// the MovieAndroid host (e.g. to notify Favorite tab on toggle).
 class MethodChannelService {
   MethodChannelService()
-      : _channel = MethodChannel(ChannelConstants.methodChannelName);
+    : _channel = MethodChannel(ChannelConstants.methodChannelName);
 
   final MethodChannel _channel;
 
@@ -14,13 +14,9 @@ class MethodChannelService {
   /// Native forwards this to the Favorite engine via EventChannel.
   /// No-op if not running in MovieAndroid or call fails.
   Future<void> notifyToggleFavorite(int movieId) async {
-    try {
-      await _channel.invokeMethod<void>(
-        ChannelConstants.methodOnToggleFavorite,
-        movieId,
-      );
-    } on PlatformException {
-      // Not running in native shell or engine doesn't handle it – ignore.
-    }
+    await _channel.invokeMethod<void>(
+      ChannelConstants.methodOnToggleFavorite,
+      movieId,
+    );
   }
 }

@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_browse/core/config/app_config.dart';
 
 import '../../../../core/constants/app_routes.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/service/navigation_service.dart';
 import '../../../movie_detail/movie_detail_route_args.dart';
-import '../../injection.dart';
 import '../bloc/movies_bloc.dart';
 import '../widgets/movie_list_item.dart';
 
@@ -16,17 +16,17 @@ class DiscoverMoviesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<MoviesBloc>(
       create: (_) {
-        final bloc = context.read<MoviesBlocFactory>()();
+        final bloc = createMoviesBloc();
         bloc.add(const MoviesLoadRequested());
         return bloc;
       },
-      child: const _DiscoverMoviesView(),
+      child: DiscoverMoviesView(),
     );
   }
 }
 
-class _DiscoverMoviesView extends StatelessWidget {
-  const _DiscoverMoviesView();
+class DiscoverMoviesView extends StatelessWidget {
+  const DiscoverMoviesView({super.key});
 
   @override
   Widget build(BuildContext context) {

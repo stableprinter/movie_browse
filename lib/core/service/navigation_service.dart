@@ -58,8 +58,14 @@ class NavigationService {
     String routeName, {
     Object? arguments,
   }) {
+    print('Getting navigator instance');
     final navigator = _navigator;
-    if (navigator == null) return Future<T?>.value(null);
+    print('Checking if navigator is null');
+    if (navigator == null) {
+      print('Navigator is null, returning null future');
+      return Future<T?>.value(null);
+    }
+    print('Pushing named route: $routeName');
     return navigator.pushNamed<T>(routeName, arguments: arguments);
   }
 

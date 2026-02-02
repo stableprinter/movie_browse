@@ -3,18 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_browse/core/config/app_config.dart';
 
 import 'core/constants/app_routes.dart';
-import 'core/service/event_channel_service.dart';
-import 'core/service/method_channel_service.dart';
+import 'core/di/service_locator.dart';
 import 'core/service/navigation_service.dart';
-import 'features/movie_detail/injection.dart';
 import 'features/movie_detail/movie_detail_route_args.dart';
-import 'features/movies/injection.dart';
+import 'features/movie_detail/presentation/pages/movie_detail_page.dart';
 import 'features/movies/presentation/pages/discover_movies_page.dart';
-import 'features/person_detail/injection.dart';
-
-final _navigationService = NavigationService();
-final _eventChannelService = EventChannelService();
-final _methodChannelService = MethodChannelService();
+import 'features/person_detail/presentation/pages/person_detail_page.dart';
 
 /// Parses a route name of the form `/movie:true:123`
 /// Returns a tuple of (isFavorite, movieId) if matched, otherwise null.
@@ -37,9 +31,8 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
       movieDetailParams?.isFavorite != null) {
     return MaterialPageRoute<void>(
       settings: settings,
-      builder: (_) => createMovieDetailPage(
-        movieDetailParams!.movieId,
-        _methodChannelService,
+      builder: (_) => MovieDetailPage(
+        movieId: movieDetailParams!.movieId,
         initialIsFavorite: movieDetailParams.isFavorite,
       ),
     );
@@ -55,9 +48,8 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
       final args = settings.arguments as MovieDetailRouteArgs;
       return MaterialPageRoute<void>(
         settings: settings,
-        builder: (_) => createMovieDetailPage(
-          args.movieId,
-          _methodChannelService,
+        builder: (_) => MovieDetailPage(
+          movieId: args.movieId,
           initialIsFavorite: args.isFavorite,
         ),
       );
@@ -65,7 +57,7 @@ Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
       final personId = settings.arguments as int;
       return MaterialPageRoute<void>(
         settings: settings,
-        builder: (_) => createPersonDetailPage(personId),
+        builder: (_) => PersonDetailPage(personId: personId),
       );
     default:
       return null;
@@ -87,18 +79,10 @@ class MovieBrowseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<NavigationService>.value(value: _navigationService),
-        RepositoryProvider<EventChannelService>.value(
-          value: _eventChannelService,
-        ),
-        RepositoryProvider<MoviesBlocFactory>.value(
-          value: () => createMoviesBloc(_eventChannelService),
-        ),
-      ],
+    return RepositoryProvider<NavigationService>.value(
+      value: getIt<NavigationService>(),
       child: MaterialApp(
-        navigatorKey: _navigationService.navigatorKey,
+        navigatorKey: getIt<NavigationService>().navigatorKey,
         title: AppConfig.appName,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

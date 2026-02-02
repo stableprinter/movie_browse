@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_browse/core/config/app_config.dart';
 
 import '../../../../core/constants/app_routes.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/service/navigation_service.dart';
-import '../../injection.dart';
 import '../bloc/movie_detail_bloc.dart';
 import '../widgets/cast_list_item.dart';
 
@@ -23,15 +23,15 @@ class MovieDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<MovieDetailBloc>(
       create: (_) =>
-          context.read<MovieDetailBlocFactory>()(movieId, initialIsFavorite: initialIsFavorite)
+          createMovieDetailBloc(movieId, initialIsFavorite: initialIsFavorite)
             ..add(const MovieDetailLoadRequested()),
-      child: _MovieDetailView(movieId: movieId),
+      child: MovieDetailView(movieId: movieId),
     );
   }
 }
 
-class _MovieDetailView extends StatelessWidget {
-  const _MovieDetailView({required this.movieId});
+class MovieDetailView extends StatelessWidget {
+  const MovieDetailView({super.key, required this.movieId});
 
   final int movieId;
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_browse/core/config/app_config.dart';
 
-import '../../injection.dart';
+import '../../../../core/di/service_locator.dart';
 import '../bloc/person_detail_bloc.dart';
 
 class PersonDetailPage extends StatelessWidget {
@@ -14,15 +14,15 @@ class PersonDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<PersonDetailBloc>(
       create: (_) =>
-          context.read<PersonDetailBlocFactory>()(personId)
+          createPersonDetailBloc(personId)
             ..add(const PersonDetailLoadRequested()),
-      child: _PersonDetailView(personId: personId),
+      child: PersonDetailView(personId: personId),
     );
   }
 }
 
-class _PersonDetailView extends StatelessWidget {
-  const _PersonDetailView({required this.personId});
+class PersonDetailView extends StatelessWidget {
+  const PersonDetailView({super.key, required this.personId});
 
   final int personId;
 
