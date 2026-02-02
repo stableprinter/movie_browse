@@ -14,7 +14,7 @@ import 'features/person_detail/presentation/pages/person_detail_page.dart';
 /// Returns a tuple of (isFavorite, movieId) if matched, otherwise null.
 ({bool isFavorite, int movieId})? _movieDetailParamsFromPath(String? name) {
   if (name == null) return null;
-  // Pattern: /movie:true:123 or /movie:false:456
+  // Pattern: /movie:{isFavorite}:{movieId}
   final regex = RegExp(r'^/movie:(true|false):(\d+)$');
   final match = regex.firstMatch(name);
   if (match == null) return null;
@@ -87,7 +87,7 @@ class MovieBrowseApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
-          fontFamily: "BrandFont"
+          fontFamily: AppConfig.brandFont
         ),
         initialRoute: AppRoutes.browse,
         onGenerateRoute: _onGenerateRoute,

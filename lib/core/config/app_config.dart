@@ -7,6 +7,7 @@ class AppConfig {
   static String? _baseUrl;
   static String? _appName;
   static String? _imageBaseUrl;
+  static String? _brandFont;
 
   static void set({
     String? apiToken,
@@ -14,12 +15,14 @@ class AppConfig {
     String? baseUrl,
     String? appName,
     String? imageBaseUrl,
+    String? brandFont,
   }) {
     _apiToken = apiToken;
     _userId = userId;
     _baseUrl = baseUrl;
     _appName = appName;
     _imageBaseUrl = imageBaseUrl;
+    _brandFont = brandFont;
   }
 
   /// Applies config from Super-App browse entry-point arguments.
@@ -37,6 +40,7 @@ class AppConfig {
       baseUrl: args.length > 2 ? args[2] : null,
       appName: args.length > 3 ? args[3] : null,
       imageBaseUrl: args.length > 4 ? args[4] : null,
+      brandFont: 'BrandFont',
     );
   }
 
@@ -45,4 +49,5 @@ class AppConfig {
   static String? get baseUrl => _baseUrl;
   static String? get appName => _appName;
   static String? get imageBaseUrl => _imageBaseUrl;
+  static String? get brandFont => _brandFont;
 }

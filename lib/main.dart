@@ -22,6 +22,9 @@ void main() async {
     baseUrl: 'https://api.themoviedb.org/3',
     appName: 'MovieBrowse (Mock)',
     imageBaseUrl: 'https://image.tmdb.org/t/p/w500',
+    /// for debugging purposes, you can change the font to any other font you want
+    /// dont forget to change the font in the pubspec.yaml file and add in assets folder
+    brandFont: 'BrandFont',
   );
 
   WidgetsFlutterBinding.ensureInitialized();
