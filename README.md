@@ -59,17 +59,86 @@ flutter run
 
 ```
 lib/
-├── core/              # Shared: API client, constants, errors, storage
+├── core/                    # Shared infrastructure & cross-cutting concerns
+│   ├── config/              # App configuration
+│   ├── constants/           # API endpoints, routes, channel names
+│   ├── di/                  # Dependency injection (GetIt service locator)
+│   ├── errors/              # Failure types (ServerFailure, NetworkFailure)
+│   └── service/             # API client, MethodChannel, EventChannel, navigation
 ├── features/
-│   ├── movies/        # Browse movies page (discover, filter, search)
-│   ├── movie_detail/  # Movie detail page (accessible via deeplink)
-│   └── person_detail/ # Person detail page (actor/crew info)
+│   ├── movies/              # Browse movies (discover, filter, search)
+│   ├── movie_detail/        # Movie detail (accessible via deeplink)
+│   └── person_detail/       # Person detail (actor/crew info)
 └── main.dart
 ```
 
+### Feature Structure (Clean Architecture)
+
+Each feature follows the same layered structure:
+
+```
+features/<feature_name>/
+├── data/                    # Outermost layer – implementation details
+│   ├── datasources/         # Remote/local data sources (API, DB)
+│   │   ├── *_datasource.dart        # Abstract contract
+│   │   └── *_datasource_impl.dart   # Concrete implementation
+│   ├── models/              # DTOs with fromJson/toJson (extends Entity)
+│   └── repositories/       # Repository implementations
+│       └── *_repository_impl.dart
+├── domain/                  # Innermost layer – business logic (no Flutter)
+│   ├── entities/           # Pure business objects
+│   ├── repositories/       # Abstract repository contracts
+│   └── usecases/           # Single-responsibility business operations
+└── presentation/           # UI layer – Flutter-dependent
+    ├── bloc/               # State management (events, states, bloc)
+    ├── pages/              # Full-screen screens
+    └── widgets/            # Reusable UI components
+```
+
+### Clean Architecture: Layer Communication
+
+**Dependency rule:** Dependencies point **inward**. Inner layers never depend on outer layers.
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  PRESENTATION (Bloc, Pages, Widgets)                             │
+│  • Listens to user actions, emits UI states                     │
+│  • Depends on: Domain (UseCases)                                 │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │ calls
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  DOMAIN (Entities, Repositories*, UseCases)                      │
+│  • Pure business logic, framework-agnostic                      │
+│  • Depends on: nothing (only core/errors)                        │
+└───────────────────────────────┬─────────────────────────────────┘
+                                │ implements
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  DATA (Datasources, Models, RepositoryImpl)                     │
+│  • Fetches data, maps to Entities, handles errors               │
+│  • Depends on: Domain (Entities, Repository contracts)          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Data flow example (Discover Movies):**
+
+1. **UI** → User pulls to refresh → `MoviesBloc` receives `MoviesRefreshRequested`
+2. **Bloc** → Calls `DiscoverMoviesUseCase(page: 1)`
+3. **UseCase** → Calls `MoviesRepository.discoverMovies()`
+4. **RepositoryImpl** → Calls `MoviesRemoteDatasource.discoverMovies()`
+5. **DatasourceImpl** → Fetches from API, maps JSON → `MovieModel`, returns `Either<Failure, List<Movie>>`
+6. **Response** flows back: Datasource → Repository → UseCase → Bloc
+7. **Bloc** → `result.fold()` handles `Left(Failure)` or `Right(movies)` → emits `MoviesLoaded` or `MoviesError`
+8. **UI** → Rebuilds from new state
+
+**Error handling:** All async operations return `Either<Failure, T>` (dartz). `Left` = error, `Right` = success. Presentation uses `.fold()` to handle both.
+
+**Dependency injection:** `core/di/service_locator.dart` wires layers via GetIt. Blocs receive UseCases; Repositories receive Datasources. Contracts (abstract classes) are registered with concrete implementations.
+
 ## Architecture
 
-- **Clean Architecture** – data, domain, presentation layers per feature
+- **Clean Architecture** – data, domain, presentation layers per feature; dependency rule enforced
 - **flutter_bloc** – state management
 - **dartz** – `Either<Failure, T>` for error handling
 - **Feature-first structure** – each feature is self-contained and modular
