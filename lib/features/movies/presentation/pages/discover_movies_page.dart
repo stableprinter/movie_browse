@@ -32,7 +32,7 @@ class DiscoverMoviesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${AppConfig.appName ?? 'Movie Browse'}V1.1.0"),
+        title: Text("${AppConfig.appName ?? 'Movie Browse'}V1.2.0"),
       ),
       body: BlocConsumer<MoviesBloc, MoviesState>(
         listener: (context, state) {},
