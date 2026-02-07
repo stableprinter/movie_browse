@@ -32,7 +32,7 @@ class DiscoverMoviesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppConfig.appName ?? 'Movie Browse'),
+        title: Text("${AppConfig.appName ?? 'Movie Browse'}V1.0.0"),
       ),
       body: BlocConsumer<MoviesBloc, MoviesState>(
         listener: (context, state) {},
@@ -58,8 +58,9 @@ class DiscoverMoviesView extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       FilledButton.icon(
-                        onPressed: () =>
-                            context.read<MoviesBloc>().add(const MoviesLoadRequested()),
+                        onPressed: () => context.read<MoviesBloc>().add(
+                          const MoviesLoadRequested(),
+                        ),
                         icon: const Icon(Icons.refresh),
                         label: const Text('Retry'),
                       ),
@@ -90,14 +91,15 @@ class DiscoverMoviesView extends StatelessWidget {
                       notification.metrics.pixels >=
                           notification.metrics.maxScrollExtent - 200 &&
                       !state.isLoadingMore) {
-                    context
-                        .read<MoviesBloc>()
-                        .add(const MoviesLoadNextPageRequested());
+                    context.read<MoviesBloc>().add(
+                      const MoviesLoadNextPageRequested(),
+                    );
                   }
                   return false;
                 },
                 child: ListView.builder(
-                  itemCount: state.movies.length + (state.isLoadingMore ? 1 : 0),
+                  itemCount:
+                      state.movies.length + (state.isLoadingMore ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index >= state.movies.length) {
                       return const Padding(
@@ -126,8 +128,8 @@ class DiscoverMoviesView extends StatelessWidget {
 
   void _openMovieDetail(BuildContext context, int movieId, bool isFav) {
     context.read<NavigationService>().pushNamed<void>(
-          AppRoutes.movie,
-          arguments: MovieDetailRouteArgs(movieId: movieId, isFavorite: isFav),
-        );
+      AppRoutes.movie,
+      arguments: MovieDetailRouteArgs(movieId: movieId, isFavorite: isFav),
+    );
   }
 }
